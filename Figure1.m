@@ -117,8 +117,7 @@ cbAx = axes('Parent',fig, 'Units','normalized', ...
     'Position',cbPosition, 'Visible','off', 'CLim',climits);
 
 cb = colorbar(cbAx, 'Location','eastoutside');
-cb.AxisLocation = 'out';
-cb.YAxisLocation = 'right';
+cb.AxisLocation = 'out';  % Documented ColorBar property; no redundant YAxisLocation assignment.
 
 set(cb, ...
     'Units','normalized', 'Position',cbPosition, ...

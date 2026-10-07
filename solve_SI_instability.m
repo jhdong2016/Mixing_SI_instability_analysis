@@ -21,8 +21,8 @@ function R = solve_SI_instability(p, opt)
 %
 %   NUMERICAL OPTIONS (all settable in the companion main program)
 %     opt.task            'si' | 'point' | 'spectrum'
-%     opt.method          'chebyshev' (default) | 'staggered'
-%     opt.N               96 Chebyshev intervals / 80 staggered cells
+%     opt.method          'staggered' (default) | 'chebyshev'
+%     opt.N               80 staggered cells / 96 Chebyshev intervals
 %     opt.scan_N          optional coarse-scan resolution; [] uses opt.N
 %                         local refinement/final eigenfunctions use opt.N
 %     opt.K_grid          positive total horizontal wavenumbers
@@ -54,11 +54,12 @@ function R = solve_SI_instability(p, opt)
 %     sigma and its real part are NONDIMENSIONAL; do not divide by f again.
 %
 %   METHODS
-%     'chebyshev' ports the archived Figure-3 generalized (zeta,w,beta)
-%       collocation matrix, including its internal coordinate rotation and
-%       energy scaling. QZ excludes infinite boundary-constraint eigenvalues.
-%     'staggered' ports the primitive, energy-compatible pressure projection
-%       used for Figures 1, 2, and 4. Pressure is recovered by least squares.
+%     'staggered' implements the primitive, energy-compatible pressure
+%       projection used for ALL main-text numerical results (Figures 1-4),
+%       including the Figure-3 fit sample. Pressure is recovered by least squares.
+%     'chebyshev' provides an independent generalized (zeta,w,beta)
+%       collocation check, with its internal coordinate rotation and energy
+%       scaling. QZ excludes infinite boundary-constraint eigenvalues.
 %     At Ev=0 the requested Cheb method switches EXPLICITLY in R.notes to the
 %       staggered method: viscous stress/scalar BCs must not be imposed on
 %       the reduced-order inviscid problem. No inviscid strict-SI selected
@@ -497,7 +498,7 @@ if ~any(strcmp(p.buoyancy_bc,{'neumann','dirichlet'})), error('SI:BC','Unknown b
 validateattributes(p.horizontal_ratio,{'numeric'},{'real','finite','scalar','nonnegative'});
 validateattributes(p.U_offset,{'numeric'},{'real','finite','scalar'});
 if ~isstruct(o), error('SI:Input','opt must be a structure.'); end
-o=fill(o,'task','si'); o=fill(o,'method','chebyshev');
+o=fill(o,'task','si'); o=fill(o,'method','staggered');
 o.task=lower(char(o.task)); o.method=lower(char(o.method));
 if ~any(strcmp(o.task,{'si','point','spectrum'})), error('SI:Task','task must be si, point, or spectrum.'); end
 if ~any(strcmp(o.method,{'chebyshev','staggered'})), error('SI:Method','Unknown discretization.'); end

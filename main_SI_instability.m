@@ -23,10 +23,11 @@ p.U_offset = 0.5;                       % prescribed U(z)=z+0.5, NOT a TTW adjus
 
 %% 2. Discretization and search -- EDIT HERE
 opt.task = 'si';                        % 'si' | 'point' | 'spectrum'
-opt.method = 'chebyshev';               % 'chebyshev' for current Figure 3
-opt.N = 96;                            % number of Chebyshev intervals (N+1 nodes)
-opt.scan_N = 64;                       % coarse bracket search; set [] to use opt.N everywhere
-% opt.method = 'staggered'; opt.N = 80; opt.scan_N = []; % original primitive solver
+opt.method = 'staggered';               % all main-text numerical results, including Figure 3
+opt.N = 80;                            % number of staggered-grid cells
+opt.scan_N = [];                       % use N=80 for both the scan and final peak refinement
+% Independent Chebyshev check only (not the main-text data source):
+% opt.method = 'chebyshev'; opt.N = 96; opt.scan_N = 64;
 
 opt.K_grid = logspace(-1,log10(350),41); % K=sqrt(k^2+ell^2), positive
 opt.phi_deg = -90:5:90;                 % only used when task='spectrum'
@@ -70,7 +71,7 @@ if run_reference_checks
         0.20, 1e-5, 135.075709407515, 1.7944680784757128; ...
         0.80, 2e-3, 11.6071539080867, 0.0264124484427052];
     reference_result = zeros(size(reference,1),6);
-    fprintf('Checking four fixed-wavenumber Figure-3 benchmarks...\n');
+    fprintf('Checking four independent Chebyshev fixed-wavenumber benchmarks...\n');
     for j=1:size(reference,1)
         pt=struct('Ri',reference(j,1),'Ev',reference(j,2),'delta',.1,'Pr',1, ...
             'buoyancy_bc','neumann','horizontal_ratio',0,'U_offset',.5);

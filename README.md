@@ -135,11 +135,51 @@ The following rounded values are reported in the manuscript for strict SI at $Ri
 | $10^{-3}$ | 0.394 | 0.442 |
 | $3\times10^{-3}$ | 0.112 | 0.588 |
 
-Before comparing a calculation with the main-text figures, check that the numerical driver selects the **staggered-grid implementation with 80 cells**, rather than the independent Chebyshev configuration. Updating this README does not change solver defaults in MATLAB files. Solver names, accepted option values, and execution commands must follow the actual implementation.
+Both `main_SI_instability.m` and the implicit method default in `solve_SI_instability.m` select the **80-cell staggered-grid implementation**. The main-text configuration uses `opt.method = 'staggered'`, `opt.N = 80`, and `opt.scan_N = []`, so the coarse wavenumber scan and final peak refinement use the same vertical resolution. Chebyshev calculations remain available as explicitly selected independent checks.
 
 Keep staggered-grid and Chebyshev outputs clearly distinguished, including their solver type, vertical resolution, physical parameters, and peak-search settings. The Figure 3 empirical fit must use the main-text staggered-grid results, not a substituted Chebyshev sample.
 
-Complete figure reproduction requires the manuscript-matched numerical source code, processed numerical outputs, and figure-production scripts. Check the contents of the corresponding release before treating it as a complete reproduction package. Record the Git commit or release used for any reproduction, together with the software environment and run settings.
+The repository includes the seven processed MATLAB data files and six figure-production scripts listed below. Replotting these archived data is distinct from recalculating the eigenvalue problem. Record the Git commit or release used for either task, together with the MATLAB version and run settings.
+
+### Included figure inputs
+
+| Figure script | Required files in `data/` | Output basename in `output/` |
+| --- | --- | --- |
+| `Figure1.m` | `Figure1_data.mat` | `Figure1_N80` |
+| `Figure2.m` | `Figure2_data.mat`, `Figure2_SI_vertical_modes_data.mat` | `Figure2_N80` |
+| `Figure3.m` | `Figure3_data.mat` | `Figure3_N80` |
+| `Figure4.m` | `Figure4_data.mat` | `Figure4_N80` |
+| `FigureS1.m` | `FigureS1_data.mat` | `FigureS1` |
+| `FigureS2.m` | `FigureS2_data.mat` | `FigureS2` |
+
+### Replot the archived figures
+
+Set the MATLAB current folder to the repository root and run:
+
+```matlab
+Figure1
+Figure2
+Figure3
+Figure4
+FigureS1
+FigureS2
+```
+
+Each script reads the supplied MAT files and saves PDF, TIFF, and MATLAB FIG output in `output/`. These scripts do not solve the eigenvalue problem and do not modify the archived input data. They use MATLAB graphics functions including `exportgraphics` and `tiledlayout`; use a MATLAB release supporting these functions.
+
+### Recalculate the linear stability problem
+
+Run:
+
+```matlab
+main_SI_instability
+```
+
+The default demonstration computes strict-SI peaks at `Ri = 0.70` and `Ev = [1e-4, 1e-3, 3e-3]`. To recalculate the complete Figure 3 parameter sweep, use the eight-element `Ri_values` and eleven-element `Ev_values` vectors documented near the top of `main_SI_instability.m`, while retaining the staggered-grid settings above.
+
+The optional fixed-wavenumber benchmark block explicitly uses Chebyshev96 for an **independent reference check**. Those benchmark calculations do not change the method used by the main parameter sweep.
+
+Recalculated results are saved in `SI_solver_output/`, including `SI_results.mat`, `SI_peak_summary.csv`, and, for strict-SI runs, `SI_numerical_data.csv`. The solver driver does **not** automatically replace the seven archived `data/*.mat` files or rebuild every figure's data package. The plotting scripts continue to use the archived MAT files until those inputs are explicitly regenerated and replaced.
 
 ## 8. Manuscript and archive
 
